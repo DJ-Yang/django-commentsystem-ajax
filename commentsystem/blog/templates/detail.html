@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block contents%}
+    <hr>
+    {{ post.title }}<br>
+    {{ post.body }}<br>
+    <hr>
+
+    {% for comment in comments %}
+        {{ comment.body }}<br>
+    {% endfor %}
+    <div id="commentForm">
+        <form action="{% url 'addcomment' post.id %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class="addComment" data-catid="{{ post.id }}" value="댓글쓰기">
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $('.addComment').click(function() {
+            console.log('1');
+            $('#commentForm form').submit(function() {
+                console.log('2');
+                var postid = "{{ post.id }}"
+                console.log('3');
+                $.ajax({
+                    type: "POST",
+                    data: $('#commentForm form').serialize(),
+                    url: "/blog/detail/addComment/"+ postid,
+                    cache: false,
+                    dataType: "html",
+                    success: function (html, textStatus) {
+                        $('#commentForm form').replaceWith(html);
+                        console.log('4');
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrow) {
+                        $('#commentForm form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
+                    }
+                });
+                console.log('5');
+                return false;
+            });
+            console.log('6');
+        });
+    </script>
+{% endblock %}
