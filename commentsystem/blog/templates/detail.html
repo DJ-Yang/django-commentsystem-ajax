@@ -6,44 +6,71 @@
     {{ post.body }}<br>
     <hr>
 
-    {% for comment in comments %}
-        {{ comment.body }}<br>
-    {% endfor %}
-    <div id="commentForm">
-        <form action="{% url 'addcomment' post.id %}" method="POST">
+    <div id="commentList">
+        {% for comment in comments %}
+            {{ comment.body }}<br>
+        {% endfor %}
+    </div>
+    <div id="comments">
+        <form action="{% url 'addcomment' post.id %}" id="commentForm" method="POST">
             {% csrf_token %}
             {{ form }}
-            <input type="submit" class="addComment" data-catid="{{ post.id }}" value="댓글쓰기">
+            <button type="submit" class="addComment">댓글쓰기</button>
         </form>
     </div>
 {% endblock %}
 
 {% block script %}
     <script type="text/javascript">
+
+    $(document).ready(function() {
         $('.addComment').click(function() {
-            console.log('1');
-            $('#commentForm form').submit(function() {
-                console.log('2');
-                var postid = "{{ post.id }}"
-                console.log('3');
-                $.ajax({
+            $('#commentForm').submit(function(event) {
+                event.preventDefault();
+                var postid = "{{ post.id }}";
+                $.ajax ({
                     type: "POST",
-                    data: $('#commentForm form').serialize(),
-                    url: "/blog/detail/addComment/"+ postid,
+                    url: "/blog/detail/addComment/"+postid,
                     cache: false,
-                    dataType: "html",
-                    success: function (html, textStatus) {
-                        $('#commentForm form').replaceWith(html);
-                        console.log('4');
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrow) {
-                        $('#commentForm form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
-                    }
+                    data:  $('#commentBody').serialize(),
+                    dataType: 'json',
+                    success  : function(data){
+                        $('#commentList').append(data);
+                        },
+                    error: function (xhr, status) {
+                        alert("Sorry, there was a problem!");
+                        }
                 });
-                console.log('5');
                 return false;
             });
-            console.log('6');
         });
+    });
+        // function getComment() {
+        //     var postid = "{{ post.id }}"
+        // };
+        // $(document).ready(function() {
+        //     $('.addComment').click(function(event) {
+        //         $('#commentForm').submit(function() {
+        //             var postid = "{{ post.id }}"
+        //             $.ajax({
+        //                 type: "POST",
+        //                 data: {
+        //                    commentBody = $('#commentBody').value()
+        //                 },
+        //                 url: "/blog/detail/addComment/"+ postid,
+        //                 // cache: false,
+        //                 dataType: "json",
+        //                 success: function (data) {
+        //                     alert(data);
+        //                     $('commentList').append(data);
+        //                 },
+        //                 error: function(XMLHttpRequest, textStatus, errorThrow) {
+        //                     $('#commentForm form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
+        //                 }
+        //             });
+        //             return false;
+        //         });
+        //     });
+        // });
     </script>
 {% endblock %}

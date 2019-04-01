@@ -10,7 +10,10 @@ class PostForm(forms.ModelForm):
         fields = ('title', 'body', )
 
 class CommentForm(forms.ModelForm):
-    body = forms.CharField(max_length=240)
+    body = forms.CharField(max_length=240, 
+        widget=forms.TextInput(attrs={
+            'id': 'commentBody',
+        }))
 
     class Meta:
         model = Comment

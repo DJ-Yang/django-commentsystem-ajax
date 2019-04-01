@@ -1,6 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt  #csrf_exempt 를 사용하기 위함
+from django.http import HttpResponse
+import json
+# from django.core import serializers  #json 방식으로 리턴 해주기 위해
 
 # Create your views here.
 def index(request):
@@ -44,16 +49,25 @@ def detail(request, post_id):
         }
     )
 
+@csrf_exempt
 def  add_comment_to_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.save()
-            return redirect('detail', post.id)
+        if request.is_ajax():
+            form = CommentForm(request.POST or None)
+            data = request.POST.get("commentBody")
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.post = post
+                comment.save()
+
+                # return HttpResponse(dump, content_type='application/json')
+                # return HttpResponse(simplejson.dumps(response_dict),
+                            # mimetype='application/json')
+                # ajax가 아닐 때
+                # return redirect('detail', post.id)
+                return JsonResponse(comment.body, safe=False)
     else:
         form = CommentForm()
     return render(request, 'detail.html', {
