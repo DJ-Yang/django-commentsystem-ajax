@@ -35,7 +35,7 @@
                     data:  $('#commentBody').serialize(),
                     dataType: 'json',
                     success  : function(data){
-                        $('#commentList').append(data);
+                        $('#commentList').append(data+"<br>");
                         $('#commentBody').val("");
                         console.log("success ajax");
                         },
