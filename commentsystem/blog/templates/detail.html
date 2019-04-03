@@ -15,7 +15,7 @@
         <form action="{% url 'addcomment' post.id %}" id="commentForm" method="POST">
             {% csrf_token %}
             {{ form }}
-            <button type="submit" class="addComment">댓글쓰기</button>
+            <button class="addComment">댓글쓰기</button>
         </form>
     </div>
 {% endblock %}
@@ -36,6 +36,8 @@
                     dataType: 'json',
                     success  : function(data){
                         $('#commentList').append(data);
+                        $('#commentBody').val("");
+                        console.log("success ajax");
                         },
                     error: function (xhr, status) {
                         alert("Sorry, there was a problem!");
@@ -44,6 +46,7 @@
                 return false;
             });
         });
+        console.log("end ajax");
     });
         // function getComment() {
         //     var postid = "{{ post.id }}"
