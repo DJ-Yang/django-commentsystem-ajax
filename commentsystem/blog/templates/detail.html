@@ -7,15 +7,23 @@
     <hr>
 
     <div id="commentList">
-        {% for comment in comments %}
-            {{ comment.body }}<br>
+        {% for comment in post.comments.all %}
+            {{ comment.body }} <button id="{{comment.id}}reComment" onclick="
+            addReComment('{{comment.id}}');"
+            >대댓글달기
+        </button><br>
+            {% for recomment in comment.recomments.all %}
+                -{{ recomment.body }}<br>
+            {% endfor %}
+        <div id="{{ comment.id }}recomment"></div>
         {% endfor %}
     </div>
     <div id="comments">
         <form action="{% url 'addcomment' post.id %}" id="commentForm" method="POST">
             {% csrf_token %}
             {{ form }}
-            <button class="addComment">댓글쓰기</button>
+            <!-- <button class="addComment">댓글쓰기</button> ajax용 버튼-->
+            <input type="submit" value="댓글쓰기">
         </form>
     </div>
 {% endblock %}
@@ -23,7 +31,36 @@
 {% block script %}
     <script type="text/javascript">
 
-    $(document).ready(function() {
+    /* 대댓글을 위한 폼을 만드는 함수*/
+    function addReComment(comment_id) {
+
+        var a = document.createElement("form");
+        a.setAttribute('method', 'POST');
+        a.setAttribute('action', '/blog/detail/addReComment/'+comment_id);
+        a.setAttribute('id', 'reComment'+comment_id);
+
+        var b = document.createElement("input");
+        b.type = "text";
+        b.name = "body";
+
+        var c = document.createElement("input");
+        c.type = "submit";
+        c.value = "작성";
+
+        var d = document.createElement("input");
+        d.setAttribute('name', 'csrfmiddlewaretoken');
+        d.setAttribute('value', '{{ csrf_token }}');
+        d.type = "hidden";
+
+        a.appendChild(b);
+        a.appendChild(c);
+        a.appendChild(d);
+
+        document.getElementById(comment_id+'recomment').appendChild(a);
+    }
+
+    /* Ajax를 이용한 댓글 달기 */
+   /* $(document).ready(function() {
         $('.addComment').click(function() {
             // $('#commentForm').submit(function(event) {
             //     event.preventDefault();
@@ -36,6 +73,9 @@
                     dataType: 'json',
                     success  : function(data){
                         $('#commentList').append(data+"<br>");
+                        // $('#commentList').append("{% for comment in comments %}",
+            // "{{ comment.body }}<br>",
+        // "{% endfor %}");
                         $('#commentBody').val("");
                         console.log("success ajax");
                         },
@@ -47,7 +87,7 @@
             // });
         });
         console.log("end ajax");
-    });
+    });*/
         // function getComment() {
         //     var postid = "{{ post.id }}"
         // };

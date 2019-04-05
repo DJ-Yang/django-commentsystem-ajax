@@ -38,13 +38,13 @@ def new(request):
 
 def detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    comments = post.comments.all
+    # comments = post.comments.all
 
     form = CommentForm()
 
     return render(request, 'detail.html', {
         'post': post,
-        'comments': comments,
+        # 'comments': comments,
         'form': form,
         }
     )
@@ -54,20 +54,18 @@ def  add_comment_to_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
     if request.method == 'POST':
-        if request.is_ajax():
-            form = CommentForm(request.POST or None)
-            data = request.POST.get("commentBody")
-            if form.is_valid():
-                comment = form.save(commit=False)
-                comment.post = post
-                comment.save()
+    # if request.is_ajax(): #ajax쓸떄
+        form = CommentForm(request.POST or None)
+        data = request.POST.get("commentBody")
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
 
-                # return HttpResponse(dump, content_type='application/json')
-                # return HttpResponse(simplejson.dumps(response_dict),
-                            # mimetype='application/json')
-                # ajax가 아닐 때
-                # return redirect('detail', post.id)
-                return JsonResponse(comment.body, safe=False)
+            # ajax가 아닐 때
+            return redirect('detail', post.id)
+            # ajax를 사용할 때
+            # return JsonResponse(comment.body, safe=False)
     else:
         form = CommentForm()
     return render(request, 'detail.html', {
@@ -75,4 +73,20 @@ def  add_comment_to_post(request, post_id):
         'form': form,
         }
     )
+
+def add_recomment_to_comment(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+    post = comment.post
+
+    if request.method == 'POST':
+        # if request.is_ajax():
+        form = CommentForm(request.POST or None)
+        # data = request.POST.get("아이디~")
+        if form.is_valid():
+            recomment = form.save(commit=False)
+            recomment.parent = comment
+            recomment.post = post
+            recomment.save()
+
+            return redirect('detail', post.id)
 

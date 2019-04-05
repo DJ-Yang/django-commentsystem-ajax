@@ -7,5 +7,5 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE, related_name='comments')
-    parent = models.ForeignKey('self', default=None, on_delete=models.PROTECT, null=True)
+    parent = models.ForeignKey('self', default=None, on_delete=models.PROTECT, null=True, related_name='recomments')
     body = models.CharField(max_length=240)
