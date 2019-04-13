@@ -4,6 +4,7 @@ from .forms import PostForm, CommentForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt  #csrf_exempt 를 사용하기 위함
 from django.http import HttpResponse
+import simplejson #패키지로 받고 이런 식으로 해줘야 import 된다
 import json
 # from django.core import serializers  #json 방식으로 리턴 해주기 위해
 
@@ -49,23 +50,42 @@ def detail(request, post_id):
         }
     )
 
+# Ajax를 이용해서 댓글을 불러오기
+def get_comments_to_post(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    comments = post.comments.all()
+
+    
+
+
+# Ajax를 이용해서 댓글을 쓰기
 @csrf_exempt
 def  add_comment_to_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
     if request.method == 'POST':
-    # if request.is_ajax(): #ajax쓸떄
-        form = CommentForm(request.POST or None)
-        data = request.POST.get("commentBody")
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.save()
+        if request.is_ajax(): #ajax쓸떄
+            form = CommentForm(request.POST or None)
+            data = request.POST.get("commentBody")
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.post = post
+                comment.save()
 
-            # ajax가 아닐 때
-            return redirect('detail', post.id)
-            # ajax를 사용할 때
-            # return JsonResponse(comment.body, safe=False)
+                comments = post.comments.all()
+                a = list(comments.values())
+                print(a)
+
+                # data = {
+                #     'comments':comments.values(),
+                # }
+
+                # ajax가 아닐 때
+                # return redirect('detail', post.id)
+                # ajax를 사용할 때
+                return JsonResponse(a, safe=False)
+                # return HttpResponse(json.dumps(comments),content_type='application/json')
+                # return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
     else:
         form = CommentForm()
     return render(request, 'detail.html', {
@@ -74,6 +94,7 @@ def  add_comment_to_post(request, post_id):
         }
     )
 
+# 댓글 쓰기
 def add_recomment_to_comment(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     post = comment.post

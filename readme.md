@@ -6,3 +6,13 @@ PM 3:49
 PM 5:46
  댓글을 달면 한줄로 나오는 버그 수정
  해결법 : + "<br>"
+
+2019-04-05
+PM 10:47
+ JS를 이용해서 대댓글의 폼을 만들어주었다.
+ 대댓글을 다는 뷰를 만들어주었다.
+
+2019-04-07
+AM 01:29
+ pip install SimpleJson - 패키지를 받았다
+ python -m pip install --upgrade pip - pip 를 업그레이드 해주었다 

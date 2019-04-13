@@ -13,7 +13,7 @@
             >대댓글달기
         </button><br>
             {% for recomment in comment.recomments.all %}
-                -{{ recomment.body }}<br>
+                └ {{ recomment.body }}<br>
             {% endfor %}
         <div id="{{ comment.id }}recomment"></div>
         {% endfor %}
@@ -22,8 +22,8 @@
         <form action="{% url 'addcomment' post.id %}" id="commentForm" method="POST">
             {% csrf_token %}
             {{ form }}
-            <!-- <button class="addComment">댓글쓰기</button> ajax용 버튼-->
-            <input type="submit" value="댓글쓰기">
+            <button class="addComment">댓글쓰기</button> <!-- ajax용 버튼 -->
+            <!-- <input type="submit" value="댓글쓰기"> -->
         </form>
     </div>
 {% endblock %}
@@ -34,33 +34,39 @@
     /* 대댓글을 위한 폼을 만드는 함수*/
     function addReComment(comment_id) {
 
+        /* form 태그를 만들어주고 속성을 부여한다*/
         var a = document.createElement("form");
         a.setAttribute('method', 'POST');
         a.setAttribute('action', '/blog/detail/addReComment/'+comment_id);
         a.setAttribute('id', 'reComment'+comment_id);
 
+        /* 댓글 입력값을 받는 input field를 만든다 */
         var b = document.createElement("input");
         b.type = "text";
         b.name = "body";
 
+        /* submit 버튼을 만든다 */
         var c = document.createElement("input");
         c.type = "submit";
         c.value = "작성";
 
+        /* csrftoken을 부여한다. */
         var d = document.createElement("input");
         d.setAttribute('name', 'csrfmiddlewaretoken');
         d.setAttribute('value', '{{ csrf_token }}');
         d.type = "hidden";
 
+        /* 만들어진 필드들을 폼에 넣는다 */
         a.appendChild(b);
         a.appendChild(c);
         a.appendChild(d);
 
+        /* 만들어진 폼을 지정된 위치에 넣는다 */
         document.getElementById(comment_id+'recomment').appendChild(a);
     }
 
     /* Ajax를 이용한 댓글 달기 */
-   /* $(document).ready(function() {
+    $(document).ready(function() {
         $('.addComment').click(function() {
             // $('#commentForm').submit(function(event) {
             //     event.preventDefault();
@@ -72,10 +78,9 @@
                     data:  $('#commentBody').serialize(),
                     dataType: 'json',
                     success  : function(data){
-                        $('#commentList').append(data+"<br>");
-                        // $('#commentList').append("{% for comment in comments %}",
-            // "{{ comment.body }}<br>",
-        // "{% endfor %}");
+                        // $('#commentList').append(data+"<br>");
+                        console.log(data);
+                        $('#commentList').append(data);
                         $('#commentBody').val("");
                         console.log("success ajax");
                         },
@@ -87,33 +92,29 @@
             // });
         });
         console.log("end ajax");
-    });*/
-        // function getComment() {
-        //     var postid = "{{ post.id }}"
-        // };
-        // $(document).ready(function() {
-        //     $('.addComment').click(function(event) {
-        //         $('#commentForm').submit(function() {
-        //             var postid = "{{ post.id }}"
-        //             $.ajax({
-        //                 type: "POST",
-        //                 data: {
-        //                    commentBody = $('#commentBody').value()
-        //                 },
-        //                 url: "/blog/detail/addComment/"+ postid,
-        //                 // cache: false,
-        //                 dataType: "json",
-        //                 success: function (data) {
-        //                     alert(data);
-        //                     $('commentList').append(data);
-        //                 },
-        //                 error: function(XMLHttpRequest, textStatus, errorThrow) {
-        //                     $('#commentForm form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
-        //                 }
-        //             });
-        //             return false;
-        //         });
-        //     });
-        // });
+    });
+    // function getComment() {
+    //     var postid = "{{ post.id }}"
+    // };
+    // $(document).ready(function() {
+    //     // $('.addComment').click(function(event) {
+    //         // $('#commentForm').submit(function() {
+    //             var postid = "{{ post.id }}"
+    //             $.ajax({
+    //                 type: "GET",
+    //                 url: "/blog/detail/getComment/"+ postid,
+    //                 dataType: "json",
+    //                 success: function (data) {
+    //                     alert(data);
+    //                     $('commentList').append(data);
+    //                 },
+    //                 error: function(XMLHttpRequest, textStatus, errorThrow) {
+    //                     $('#commentForm form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
+    //                 }
+    //             });
+    //             return false;
+    //         // });
+    //     // });
+    // });
     </script>
 {% endblock %}
