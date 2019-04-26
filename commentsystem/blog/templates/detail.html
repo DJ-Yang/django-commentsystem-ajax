@@ -9,14 +9,16 @@
     <div id="commentBlock">
         <div id="commentList">
             {% for comment in post.comments.all %}
-                {{ comment.body }} <button id="{{comment.id}}reComment" onclick="
-                addReComment('{{comment.id}}');"
-                >대댓글달기
-            </button><br>
+                {% if comment.parent == NULL %}
+                    {{ comment.body }} <button id="{{comment.id}}reComment" onclick="
+                    addReComment('{{comment.id}}');"
+                    >대댓글달기
+                </button><br>
                 {% for recomment in comment.recomments.all %}
                     └ {{ recomment.body }}<br>
                 {% endfor %}
-            <div id="{{ comment.id }}recomment"></div>
+                <div id="{{ comment.id }}recomment"></div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
@@ -89,9 +91,13 @@
                         $('#commentBlock').append('<div id=commentList>', '</div>');
                         for(let i = 0; i < count; i++)
                         {
-                            var commentid = data[i].id;
-                            $('#commentList').append(data[i].body + ' <button id='+ commentid +'"reComment" onclick="'+ 'addReComment(' + commentid + ');"> 댓글달기 </button>' +'<br>'
-                            , '<div id="' + commentid + 'recomment"></div>');
+                            if (data[i].parent_id == null) {
+                                var commentid = data[i].id;
+                                $('#commentList').append(data[i].body + ' <button id='+ commentid +'"reComment" onclick="'+ 'addReComment(' + commentid + ');"> 댓글달기 </button>' +'<br>'
+                                , '<div id="' + commentid + 'recomment"></div>');
+                            } else {
+                                $('#'+ data[i].parent_id + 'recomment').append('ㄴ' + data[i].body);
+                            }
                         }
                         $('#commentForm input').val('');
                         console.log("success ajax");

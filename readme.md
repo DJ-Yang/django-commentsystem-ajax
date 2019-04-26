@@ -15,4 +15,7 @@ PM 10:47
 2019-04-07
 AM 01:29
  pip install SimpleJson - 패키지를 받았다
- python -m pip install --upgrade pip - pip 를 업그레이드 해주었다 
+ python -m pip install --upgrade pip - pip 를 업그레이드 해주었다
+
+2019-04-14
+ AJAX success function으로 값을 보내는 방법을 알았다. 객체 형식으로 보내는 것이 아닌 원하는 값을 리스트 형식으로 만들어 json 방식으로 보내야한다.
