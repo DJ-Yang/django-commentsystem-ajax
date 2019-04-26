@@ -6,17 +6,19 @@
     {{ post.body }}<br>
     <hr>
 
-    <div id="commentList">
-        {% for comment in post.comments.all %}
-            {{ comment.body }} <button id="{{comment.id}}reComment" onclick="
-            addReComment('{{comment.id}}');"
-            >대댓글달기
-        </button><br>
-            {% for recomment in comment.recomments.all %}
-                └ {{ recomment.body }}<br>
+    <div id="commentBlock">
+        <div id="commentList">
+            {% for comment in post.comments.all %}
+                {{ comment.body }} <button id="{{comment.id}}reComment" onclick="
+                addReComment('{{comment.id}}');"
+                >대댓글달기
+            </button><br>
+                {% for recomment in comment.recomments.all %}
+                    └ {{ recomment.body }}<br>
+                {% endfor %}
+            <div id="{{ comment.id }}recomment"></div>
             {% endfor %}
-        <div id="{{ comment.id }}recomment"></div>
-        {% endfor %}
+        </div>
     </div>
     <div id="comments">
         <form action="{% url 'addcomment' post.id %}" id="commentForm" method="POST">
@@ -79,9 +81,19 @@
                     dataType: 'json',
                     success  : function(data){
                         // $('#commentList').append(data+"<br>");
-                        console.log(data);
-                        $('#commentList').append(data);
-                        $('#commentBody').val("");
+                        for(var count in data)
+                        {
+                            count++;
+                        }
+                        $('#commentList').remove();
+                        $('#commentBlock').append('<div id=commentList>', '</div>');
+                        for(let i = 0; i < count; i++)
+                        {
+                            var commentid = data[i].id;
+                            $('#commentList').append(data[i].body + ' <button id='+ commentid +'"reComment" onclick="'+ 'addReComment(' + commentid + ');"> 댓글달기 </button>' +'<br>'
+                            , '<div id="' + commentid + 'recomment"></div>');
+                        }
+                        $('#commentForm input').val('');
                         console.log("success ajax");
                         },
                     error: function (xhr, status) {
