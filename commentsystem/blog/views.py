@@ -73,8 +73,13 @@ def  add_comment_to_post(request, post_id):
                 comment.save()
 
                 comments = post.comments.all()
-                a = list(comments.values())
-                print(a)
+                # a = list(comments.values())
+                # print(a)
+
+                a = comments.values()
+                b = []
+                for c in a:
+                    b.append(c)
 
                 # data = {
                 #     'comments':comments.values(),
@@ -83,7 +88,7 @@ def  add_comment_to_post(request, post_id):
                 # ajax가 아닐 때
                 # return redirect('detail', post.id)
                 # ajax를 사용할 때
-                return JsonResponse(a, safe=False)
+                return JsonResponse(b, safe=False)
                 # return HttpResponse(json.dumps(comments),content_type='application/json')
                 # return HttpResponse(simplejson.dumps(to_json), mimetype='application/json')
     else:
